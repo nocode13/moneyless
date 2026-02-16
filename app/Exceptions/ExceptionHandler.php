@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-class ApiExceptionHandler
+class ExceptionHandler
 {
     public function handle(Throwable $e): JsonResponse
     {
