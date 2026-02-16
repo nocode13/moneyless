@@ -7,9 +7,7 @@ use App\DTO\RegisterDTO;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use App\Services\AuthService;
-use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,13 +15,13 @@ use Illuminate\Http\Response;
 final class AuthController extends Controller
 {
     public function __construct(
-        private readonly AuthService $authService,
+        private AuthService $authService,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse
     {
         $dto = RegisterDTO::fromArray($request->validated());
-        ['user' => $user, 'token' => $token] = $this->authService->register($dto);
+        [$user, $token] = $this->authService->register($dto);
 
         return UserResource::make($user)
             ->additional(['token' => $token])
@@ -31,14 +29,13 @@ final class AuthController extends Controller
             ->setStatusCode(201);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): UserResource
     {
         $dto = LoginDTO::fromArray($request->validated());
-        ['user' => $user, 'token' => $token] = $this->authService->login($dto);
+        [$user, $token] = $this->authService->login($dto);
 
         return UserResource::make($user)
-            ->additional(['token' => $token])
-            ->response();
+            ->additional(['token' => $token]);
     }
 
     public function logout(Request $request): Response

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 final class AuthService
 {
     /**
-     * @return array{user: User, token: string}
+     * @return array{User,string}
      */
     public function register(RegisterDTO $dto): array
     {
@@ -21,13 +21,13 @@ final class AuthService
             'password' => $dto->password,
         ]);
 
-        $token = $user->createToken('auth')->plainTextToken;
+        $token = $this->getToken($user);
 
-        return ['user' => $user, 'token' => $token];
+        return [$user, $token];
     }
 
     /**
-     * @return array{user: User, token: string}
+     * @return array{User,string}
      */
     public function login(LoginDTO $dto): array
     {
@@ -37,13 +37,18 @@ final class AuthService
             throw new InvalidCredentialsException();
         }
 
-        $token = $user->createToken('auth')->plainTextToken;
+        $token = $this->getToken($user);
 
-        return ['user' => $user, 'token' => $token];
+        return [$user, $token];
     }
 
     public function logout(User $user): void
     {
         $user->currentAccessToken()->delete();
+    }
+
+    private function getToken(User $user): string
+    {
+        return $user->createToken('auth')->plainTextToken;
     }
 }

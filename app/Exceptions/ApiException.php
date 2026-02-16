@@ -6,7 +6,7 @@ use Exception;
 
 abstract class ApiException extends Exception
 {
-    private readonly int $statusCode;
+    private int $statusCode;
 
     public function __construct(string $message, int $statusCode)
     {
