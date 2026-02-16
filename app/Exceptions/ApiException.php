@@ -6,11 +6,12 @@ use Exception;
 
 abstract class ApiException extends Exception
 {
-    public function __construct(
-        string $message,
-        private readonly int $statusCode
-    ) {
+    private readonly int $statusCode;
+
+    public function __construct(string $message, int $statusCode)
+    {
         parent::__construct($message);
+        $this->statusCode = $statusCode;
     }
 
     public function getStatusCode(): int

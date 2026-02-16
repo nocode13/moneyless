@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin \App\Models\User
  */
-final class AuthResource extends JsonResource
+final class UserResource extends JsonResource
 {
     /**
      * @return array<string, mixed>

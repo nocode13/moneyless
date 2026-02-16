@@ -4,14 +4,16 @@ namespace App\Services;
 
 use App\DTO\LoginDTO;
 use App\DTO\RegisterDTO;
-use App\Http\Resources\AuthResource;
 use App\Models\User;
 use App\Exceptions\InvalidCredentialsException;
 use Illuminate\Support\Facades\Hash;
 
 final class AuthService
 {
-    public function register(RegisterDTO $dto): AuthResource
+    /**
+     * @return array{user: User, token: string}
+     */
+    public function register(RegisterDTO $dto): array
     {
         $user = User::create([
             'name' => $dto->name,
@@ -21,10 +23,13 @@ final class AuthService
 
         $token = $user->createToken('auth')->plainTextToken;
 
-        return AuthResource::make($user)->additional(['token' => $token]);
+        return ['user' => $user, 'token' => $token];
     }
 
-    public function login(LoginDTO $dto): AuthResource
+    /**
+     * @return array{user: User, token: string}
+     */
+    public function login(LoginDTO $dto): array
     {
         $user = User::where('email', $dto->email)->first();
 
@@ -34,7 +39,7 @@ final class AuthService
 
         $token = $user->createToken('auth')->plainTextToken;
 
-        return AuthResource::make($user)->additional(['token' => $token]);
+        return ['user' => $user, 'token' => $token];
     }
 
     public function logout(User $user): void

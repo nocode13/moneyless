@@ -13,11 +13,11 @@ class ApiExceptionHandler
     public function handle(Throwable $e): JsonResponse
     {
         if ($e instanceof ApiException || $e instanceof HttpException) {
-            return $this->respond($e->getMessage(), $e->getStatusCode());
+            return $this->errorResponse($e->getMessage(), $e->getStatusCode());
         }
 
         if ($e instanceof AuthenticationException) {
-            return $this->respond($e->getMessage(), 401);
+            return $this->errorResponse($e->getMessage(), 401);
         }
 
         if ($e instanceof ValidationException) {
@@ -30,13 +30,13 @@ class ApiExceptionHandler
         }
 
         report($e);
-        return $this->respond(
+        return $this->errorResponse(
             config('app.debug') ? $e->getMessage() : 'Internal error',
             500
         );
     }
 
-    private function respond(string $message, int $status): JsonResponse
+    private function errorResponse(string $message, int $status): JsonResponse
     {
         return response()->json([
             'success' => false,

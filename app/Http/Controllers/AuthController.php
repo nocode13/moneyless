@@ -6,11 +6,13 @@ use App\DTO\LoginDTO;
 use App\DTO\RegisterDTO;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\AuthResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 final class AuthController extends Controller
 {
@@ -21,24 +23,29 @@ final class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $dto = RegisterDTO::fromArray($request->validated());
+        ['user' => $user, 'token' => $token] = $this->authService->register($dto);
 
-        return $this->authService
-            ->register($dto)
+        return UserResource::make($user)
+            ->additional(['token' => $token])
             ->response()
             ->setStatusCode(201);
     }
 
-    public function login(LoginRequest $request): AuthResource
+    public function login(LoginRequest $request): JsonResponse
     {
         $dto = LoginDTO::fromArray($request->validated());
+        ['user' => $user, 'token' => $token] = $this->authService->login($dto);
 
-        return $this->authService->login($dto);
+        return UserResource::make($user)
+            ->additional(['token' => $token])
+            ->response();
     }
 
-    public function logout(#[CurrentUser] User $user): JsonResponse
+    public function logout(Request $request): Response
     {
+        $user = $request->user();
         $this->authService->logout($user);
 
-        return response()->json(status: 204);
+        return response()->noContent();
     }
 }

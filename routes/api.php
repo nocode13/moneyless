@@ -14,5 +14,5 @@ Route::middleware(['throttle:auth', 'guest:sanctum'])
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', MeController::class);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::delete('/auth/logout', [AuthController::class, 'logout']);
 });
