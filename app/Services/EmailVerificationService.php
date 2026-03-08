@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\EmailAlreadyVerifiedException;
 use App\Exceptions\InvalidVerificationLinkException;
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 
 final class EmailVerificationService
 {
@@ -16,7 +17,9 @@ final class EmailVerificationService
 
         $this->checkIfAlreadyVerified($user);
 
-        $user->markEmailAsVerified();
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
     }
 
     public function resend(User $user): void

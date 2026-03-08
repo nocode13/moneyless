@@ -15,8 +15,8 @@ services:
   mailpit:
     image: axllent/mailpit:v1.24
     ports:
-      - "${MAIL_PORT:-1025}:1025"
-      - "${MAILPIT_UI_PORT:-8025}:8025"
+      - "127.0.0.1:${MAIL_PORT:-1025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
 
 volumes:
   postgres_data:
