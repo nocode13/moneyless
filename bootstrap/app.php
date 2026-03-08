@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->statefulApi();
         $middleware->redirectGuestsTo(fn() => abort(401, 'Unauthenticated'));
         $middleware->redirectUsersTo(fn() => abort(403, 'Already authenticated'));
+        $middleware->alias([
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e) {
