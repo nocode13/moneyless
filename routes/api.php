@@ -18,7 +18,7 @@ Route::prefix('email')->controller(EmailVerificationController::class)->group(fu
     Route::post('/verification-notification', 'resend')->middleware(['auth:sanctum', 'throttle:auth']);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', MeController::class)->middleware('verified');
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/me', MeController::class);
     Route::delete('/auth/logout', [AuthController::class, 'logout']);
 });

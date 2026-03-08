@@ -11,6 +11,12 @@ services:
     ports:
       - "${DB_PORT}:5432"
 
+  # --- Redis ---
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
   # --- Mailpit ---
   mailpit:
     image: axllent/mailpit:v1.24

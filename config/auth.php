@@ -118,12 +118,14 @@ return [
     |--------------------------------------------------------------------------
     |
     | The expiry time is the number of minutes that each verification link
-    | will be considered valid.
+    | will be considered valid. The resend throttle is the number of seconds
+    | a user must wait before requesting another verification email.
     |
     */
 
     'verification' => [
         'expire' => env('AUTH_VERIFICATION_EXPIRE', 60),
+        'resend_throttle' => env('AUTH_VERIFICATION_RESEND_THROTTLE', 20),
     ],
 
 ];
