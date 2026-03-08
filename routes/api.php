@@ -14,7 +14,7 @@ Route::middleware(['throttle:auth', 'guest:sanctum'])
     });
 
 Route::prefix('email')->controller(EmailVerificationController::class)->group(function () {
-    Route::get('/verify/{id}/{hash}', 'verify')->middleware('signed')->name('verification.verify');
+    Route::get('/verify/{id}/{hash}', 'verify')->middleware(['signed', 'throttle:auth'])->name('verification.verify');
     Route::post('/verification-notification', 'resend')->middleware(['auth:sanctum', 'throttle:auth']);
 });
 
