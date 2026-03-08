@@ -21,6 +21,8 @@ final class AuthService
             'password' => $dto->password,
         ]);
 
+        $user->sendEmailVerificationNotification();
+
         $token = $this->getToken($user);
 
         return [$user, $token];
