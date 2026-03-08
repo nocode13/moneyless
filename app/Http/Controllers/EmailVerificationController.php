@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\InvalidVerificationLinkException;
+use App\Exceptions\UnknownException;
 use App\Models\User;
 use App\Services\EmailVerificationService;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +19,7 @@ final class EmailVerificationController extends Controller
         $user = User::find($id);
 
         if (! $user) {
-            throw new InvalidVerificationLinkException();
+            throw new UnknownException();
         }
 
         $this->emailVerificationService->verify($user, $hash);

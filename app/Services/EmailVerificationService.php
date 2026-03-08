@@ -24,29 +24,20 @@ final class EmailVerificationService
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
-
-        Cache::forget($this->resendThrottleKey($user));
     }
 
     public function resend(User $user): void
     {
+        $lock = Cache::lock("verification_resend_{$user->id}", 20);
+
+        if (! $lock->get()) {
+            throw new TooManyRequestsException();
+        }
+
         if ($user->hasVerifiedEmail()) {
             throw new EmailAlreadyVerifiedException();
         }
 
-        $key = $this->resendThrottleKey($user);
-
-        if (Cache::has($key)) {
-            throw new TooManyRequestsException();
-        }
-
         $user->sendEmailVerificationNotification();
-
-        Cache::put($key, true, config('auth.verification.resend_throttle', 20));
-    }
-
-    private function resendThrottleKey(User $user): string
-    {
-        return "verification_resend:{$user->id}";
     }
 }
