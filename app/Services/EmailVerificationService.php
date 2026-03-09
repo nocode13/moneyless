@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Cache;
 
 final class EmailVerificationService
 {
+    public function __construct(private WalletService $walletService) {}
+
     public function verify(User $user, string $hash): void
     {
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
@@ -23,6 +25,7 @@ final class EmailVerificationService
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
+            $this->walletService->create($user);
         }
     }
 

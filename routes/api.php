@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\MeController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['throttle:auth', 'guest:sanctum'])
@@ -22,3 +23,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/me', MeController::class);
     Route::delete('/auth/logout', [AuthController::class, 'logout']);
 });
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->prefix('wallet')
+    ->controller(WalletController::class)
+    ->group(function () {
+        Route::get('/me', 'show');
+        Route::post('/create', 'create');
+    });
