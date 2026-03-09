@@ -22,12 +22,11 @@ Route::prefix('email')->controller(EmailVerificationController::class)->group(fu
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/me', MeController::class);
     Route::delete('/auth/logout', [AuthController::class, 'logout']);
-});
 
-Route::middleware(['auth:sanctum', 'verified'])
-    ->prefix('wallet')
-    ->controller(WalletController::class)
-    ->group(function () {
-        Route::get('/me', 'show');
-        Route::post('/create', 'create');
-    });
+    Route::prefix('wallet')
+        ->controller(WalletController::class)
+        ->group(function () {
+            Route::get('/', 'show');
+            Route::post('/create', 'create');
+        });
+});

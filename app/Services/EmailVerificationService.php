@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 final class EmailVerificationService
 {
-    public function __construct(private WalletService $walletService) {}
-
     public function verify(User $user, string $hash): void
     {
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
@@ -26,10 +24,8 @@ final class EmailVerificationService
 
         DB::transaction(function () use ($user) {
             $user->markEmailAsVerified();
-            $this->walletService->create($user);
+            event(new Verified($user));
         });
-
-        event(new Verified($user));
     }
 
     public function resend(User $user): void

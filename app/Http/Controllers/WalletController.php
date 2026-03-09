@@ -10,11 +10,14 @@ use Illuminate\Container\Attributes\CurrentUser;
 
 class WalletController extends Controller
 {
-    public function __construct(private WalletService $walletService) {}
+    public function __construct(
+        private WalletService $walletService,
+        #[CurrentUser] private User $user
+    ) {}
 
-    public function show(#[CurrentUser] User $user): WalletResource
+    public function show(): WalletResource
     {
-        $wallet = $user->wallet()->with('accounts.currency')->first();
+        $wallet = $this->user->wallet()->with('accounts.currency')->first();
 
         if (! $wallet) {
             throw new NotFoundException('Wallet not found');
@@ -23,9 +26,11 @@ class WalletController extends Controller
         return WalletResource::make($wallet);
     }
 
-    public function create(#[CurrentUser] User $user): WalletResource
+    public function create(): WalletResource
     {
-        $wallet = $this->walletService->create($user)->load('accounts.currency');
+        $wallet = $this->walletService->create($this->user);
+
+        $wallet->loadMissing('accounts.currency');
 
         return WalletResource::make($wallet);
     }
