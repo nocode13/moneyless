@@ -19,7 +19,7 @@ class WalletResource extends JsonResource
         return [
             'id' => $this->id,
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
-            'freezed' => $this->freezed,
+            'frozen' => $this->frozen,
         ];
     }
 }

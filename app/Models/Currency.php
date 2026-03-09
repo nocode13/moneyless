@@ -27,7 +27,7 @@ class Currency extends Model
      *
      * @return HasMany<Account, $this>
      */
-    protected function accounts(): HasMany
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }

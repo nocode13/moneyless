@@ -8,6 +8,7 @@ use App\Exceptions\TooManyRequestsException;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 final class EmailVerificationService
 {
@@ -23,10 +24,12 @@ final class EmailVerificationService
             throw new EmailAlreadyVerifiedException();
         }
 
-        if ($user->markEmailAsVerified()) {
-            event(new Verified($user));
+        DB::transaction(function () use ($user) {
+            $user->markEmailAsVerified();
             $this->walletService->create($user);
-        }
+        });
+
+        event(new Verified($user));
     }
 
     public function resend(User $user): void

@@ -13,6 +13,13 @@ class Account extends Model
         'amount',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'decimal:8',
+        ];
+    }
+
     /**
      * Get the currency associated with the account.
      *

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('wallet_id')->constrained();
             $table->foreignId('currency_id')->constrained();
-            $table->float('amount', 8);
+            $table->decimal('amount', 24, 8)->default(0);
+            $table->unique(['wallet_id', 'currency_id']);
             $table->timestamps();
         });
     }

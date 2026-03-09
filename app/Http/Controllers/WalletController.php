@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Resources\WalletResource;
 use App\Models\User;
 use App\Services\WalletService;
@@ -15,12 +16,16 @@ class WalletController extends Controller
     {
         $wallet = $user->wallet()->with('accounts.currency')->first();
 
+        if (! $wallet) {
+            throw new NotFoundException('Wallet not found');
+        }
+
         return WalletResource::make($wallet);
     }
 
     public function create(#[CurrentUser] User $user): WalletResource
     {
-        $wallet = $this->walletService->create($user)->with('accounts.currency')->first();
+        $wallet = $this->walletService->create($user)->load('accounts.currency');
 
         return WalletResource::make($wallet);
     }
