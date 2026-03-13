@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wallet_id')->constrained();
-            $table->foreignId('currency_id')->constrained();
+            $table->foreignId('wallet_id')->constrained()->restrictOnDelete();
+            $table->foreignId('currency_id')->constrained()->restrictOnDelete();
             $table->decimal('amount', 24, 8)->default(0);
             $table->unique(['wallet_id', 'currency_id']);
             $table->timestamps();

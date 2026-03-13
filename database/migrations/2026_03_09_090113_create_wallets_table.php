@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained();
+            $table->foreignId('user_id')->unique()->constrained()->restrictOnDelete();
             $table->boolean('frozen')->default(false);
             $table->timestamps();
         });

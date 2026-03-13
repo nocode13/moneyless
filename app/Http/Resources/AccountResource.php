@@ -18,10 +18,12 @@ class AccountResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'currency_code' => $this->currency->code,
-            'currency_name' => $this->currency->name,
-            'currency_symbol' => $this->currency->symbol,
-            'currency_type' => $this->currency->type,
+            'currency' => [
+                'code' => $this->currency->code,
+                'name' => $this->currency->name,
+                'symbol' => $this->currency->symbol,
+                'type' => $this->currency->type,
+            ],
             'amount' => $this->amount,
         ];
     }

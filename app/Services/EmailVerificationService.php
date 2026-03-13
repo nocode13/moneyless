@@ -6,12 +6,14 @@ use App\Exceptions\EmailAlreadyVerifiedException;
 use App\Exceptions\InvalidVerificationLinkException;
 use App\Exceptions\TooManyRequestsException;
 use App\Models\User;
-use Illuminate\Auth\Events\Verified;
+use App\Services\WalletService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 final class EmailVerificationService
 {
+    public function __construct(private WalletService $walletService) {}
+
     public function verify(User $user, string $hash): void
     {
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
@@ -24,7 +26,7 @@ final class EmailVerificationService
 
         DB::transaction(function () use ($user) {
             $user->markEmailAsVerified();
-            event(new Verified($user));
+            $this->walletService->create($user);
         });
     }
 

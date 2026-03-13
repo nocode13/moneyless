@@ -11,6 +11,7 @@ use App\Models\Wallet;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class WalletService
 {
@@ -22,11 +23,11 @@ class WalletService
         }
 
         try {
+            DB::beginTransaction();
+
             if ($user->wallet()->exists()) {
                 throw new WalletAlreadyExistsException();
             }
-
-            DB::beginTransaction();
 
             $wallet = Wallet::create([
                 'user_id' => $user->id,
@@ -47,12 +48,18 @@ class WalletService
             Account::insert($accounts);
 
             DB::commit();
-            return $wallet;
-        } catch (UniqueConstraintViolationException) {
+        } catch (Throwable $e) {
             DB::rollBack();
-            throw new WalletAlreadyExistsException();
+
+            if ($e instanceof UniqueConstraintViolationException) {
+                throw new WalletAlreadyExistsException();
+            }
+
+            throw $e;
         } finally {
             $lock->release();
         }
+
+        return $wallet;
     }
 }
